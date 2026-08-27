@@ -94,7 +94,7 @@ app.get("/demouser", async (req, res) => {
 });
 
 app.get("/", (req, res) => {
-    res.send("Hi , I am root");
+    res.redirect("/listings");
 });
 
 // Teeno routers ko yahan connect kiya gaya hai
