@@ -5,6 +5,7 @@
         border-radius: 25px;
         padding: 0 1rem 0 1rem;
         border: none; /* Default border hatane ke liye */
+        white-space: nowrap;
     }
 
     /* Space hata di gayi hai */
@@ -39,8 +40,11 @@
             <div class="navbar-nav ms-auto">
                 <form class="d-flex" role="search">
                     <input class="form-control me-2 search-input" type="search" placeholder="Search destinations" aria-label="Search">
-                    <button class="btn btn-search" type="submit">
+                    <button class="btn btn-search me-2" type="submit">
                         <i class="fa-solid fa-magnifying-glass"></i>Search
+                    </button>
+                    <button class="btn btn-search" type="button">
+                        <i class="fa-solid fa-location-dot"></i>Find Near Me
                     </button>
                 </form>
             </div>
