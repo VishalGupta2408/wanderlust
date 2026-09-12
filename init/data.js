@@ -347,6 +347,17 @@ const sampleListings = [
     location: "Costa Rica",
     country: "Costa Rica",
   },
+  {
+    title: "AI Beachfront Villa",
+    description: "Automated luxury listing by OmniDev",
+    image: {
+      filename: "listingimage",
+      url: "https://images.unsplash.com/photo-1566073771259-6a8506099945",
+    },
+    price: 12000,
+    location: "Maldives",
+    country: "Maldives",
+  },
 ];
 
 module.exports = { data: sampleListings };
