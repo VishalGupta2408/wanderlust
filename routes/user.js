@@ -29,4 +29,8 @@ router.route("/login")
 
 router.get("/logout", userController.logout);
 
+router.route("/contact")
+    .get(userController.renderContactForm)
+    .post(userController.submitContactForm);
+
 module.exports = router;
