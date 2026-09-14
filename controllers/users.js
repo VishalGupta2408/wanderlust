@@ -43,3 +43,12 @@ module.exports.logout =(req, res, next) => {
         res.redirect(redirectUrl);
     });
 }
+
+module.exports.renderContactForm = (req, res) => {
+    res.render("contact.ejs");
+};
+
+module.exports.submitContactForm = (req, res) => {
+    req.flash("success", "Thank you for contacting us! We will get back to you soon.");
+    res.redirect("/listings");
+};
