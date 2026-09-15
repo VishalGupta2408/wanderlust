@@ -1,0 +1,117 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="row mt-3">
+    <div class="col-10 offset-1">
+        <h2>My Trips</h2>
+        
+        <h4 class="mt-4 text-primary">Upcoming Trips</h4>
+        <% if (upcomingBookings && upcomingBookings.length > 0) { %>
+            <div class="row row-cols-1 row-cols-md-2 g-4 mt-1">
+                <% for (let booking of upcomingBookings) { %>
+                    <div class="col">
+                        <div class="card h-100 shadow-sm">
+                            <div class="row g-0">
+                                <div class="col-md-5">
+                                    <img src="<%= booking.listing && booking.listing.image && booking.listing.image.url ? booking.listing.image.url : 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=60' %>" 
+                                         class="img-fluid rounded-start h-100" 
+                                         alt="Listing image" 
+                                         style="object-fit: cover; min-height: 180px;">
+                                </div>
+                                <div class="col-md-7">
+                                    <div class="card-body">
+                                        <h5 class="card-title">
+                                            <% if (booking.listing) { %>
+                                                <a href="/listings/<%= booking.listing._id %>" class="text-decoration-none text-dark">
+                                                    <%= booking.listing.title %>
+                                                </a>
+                                            <% } else { %>
+                                                Listing Unavailable
+                                            <% } %>
+                                        </h5>
+                                        <p class="card-text text-muted mb-1">
+                                            <i class="fa-solid fa-location-dot"></i> 
+                                            <%= booking.listing ? booking.listing.location + ', ' + booking.listing.country : 'N/A' %>
+                                        </p>
+                                        <p class="card-text mb-1" style="font-size: 0.9rem;">
+                                            <strong>Dates:</strong> <%= new Date(booking.checkIn).toLocaleDateString("en-IN", { day: 'numeric', month: 'short', year: 'numeric' }) %> - <%= new Date(booking.checkOut).toLocaleDateString("en-IN", { day: 'numeric', month: 'short', year: 'numeric' }) %>
+                                        </p>
+                                        <p class="card-text mb-1" style="font-size: 0.9rem;">
+                                            <strong>Duration:</strong> <%= booking.nights %> <%= booking.nights === 1 ? 'night' : 'nights' %>
+                                        </p>
+                                        <p class="card-text mb-2" style="font-size: 0.95rem;">
+                                            <strong>Total:</strong> &#8377; <%= (booking.totalPrice || 0).toLocaleString("en-IN") %>
+                                        </p>
+                                        <div class="d-flex justify-content-between align-items-center mt-2">
+                                            <span class="badge bg-success">Confirmed</span>
+                                            <form method="POST" action="/bookings/<%= booking._id %>?_method=DELETE" onsubmit="return confirm('Are you sure you want to cancel this booking?');">
+                                                <button class="btn btn-sm btn-outline-danger">Cancel Trip</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+        <% } else { %>
+            <div class="alert alert-light border my-3">
+                You have no upcoming trips. <a href="/listings" class="alert-link">Explore listings</a> to plan your next adventure!
+            </div>
+        <% } %>
+
+        <h4 class="mt-5 text-secondary">Past & Cancelled Trips</h4>
+        <% if (pastBookings && pastBookings.length > 0) { %>
+            <div class="row row-cols-1 row-cols-md-2 g-4 mt-1 mb-4">
+                <% for (let booking of pastBookings) { %>
+                    <div class="col">
+                        <div class="card h-100 shadow-sm opacity-75">
+                            <div class="row g-0">
+                                <div class="col-md-5">
+                                    <img src="<%= booking.listing && booking.listing.image && booking.listing.image.url ? booking.listing.image.url : 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=60' %>" 
+                                         class="img-fluid rounded-start h-100" 
+                                         alt="Listing image" 
+                                         style="object-fit: cover; min-height: 160px;">
+                                </div>
+                                <div class="col-md-7">
+                                    <div class="card-body">
+                                        <h5 class="card-title">
+                                            <% if (booking.listing) { %>
+                                                <a href="/listings/<%= booking.listing._id %>" class="text-decoration-none text-dark">
+                                                    <%= booking.listing.title %>
+                                                </a>
+                                            <% } else { %>
+                                                Listing Unavailable
+                                            <% } %>
+                                        </h5>
+                                        <p class="card-text text-muted mb-1">
+                                            <i class="fa-solid fa-location-dot"></i> 
+                                            <%= booking.listing ? booking.listing.location + ', ' + booking.listing.country : 'N/A' %>
+                                        </p>
+                                        <p class="card-text mb-1" style="font-size: 0.9rem;">
+                                            <strong>Dates:</strong> <%= new Date(booking.checkIn).toLocaleDateString("en-IN", { day: 'numeric', month: 'short', year: 'numeric' }) %> - <%= new Date(booking.checkOut).toLocaleDateString("en-IN", { day: 'numeric', month: 'short', year: 'numeric' }) %>
+                                        </p>
+                                        <p class="card-text mb-2" style="font-size: 0.95rem;">
+                                            <strong>Total:</strong> &#8377; <%= (booking.totalPrice || 0).toLocaleString("en-IN") %>
+                                        </p>
+                                        <div>
+                                            <% if (booking.status === "cancelled") { %>
+                                                <span class="badge bg-secondary">Cancelled</span>
+                                            <% } else { %>
+                                                <span class="badge bg-info text-dark">Completed</span>
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+        <% } else { %>
+            <div class="alert alert-light border my-3">
+                No past or cancelled trips found.
+            </div>
+        <% } %>
+    </div>
+</div>

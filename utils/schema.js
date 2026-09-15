@@ -18,7 +18,15 @@ const reviewSchema = Joi.object({
   }).required(),
 });
 
+const bookingSchema = Joi.object({
+  booking: Joi.object({
+    checkIn: Joi.date().required(),
+    checkOut: Joi.date().greater(Joi.ref("checkIn")).required(),
+  }).required(),
+});
+
 module.exports = {
   listingSchema,
   reviewSchema,
+  bookingSchema,
 };
