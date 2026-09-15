@@ -1,5 +1,6 @@
 const Listing = require("../models/listing");
 const Review = require("../models/review");
+const Booking = require("../models/booking");
 const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding');
 const mapToken = process.env.MAP_TOKEN;
 const geocodingClient = mbxGeocoding({ accessToken: mapToken });
@@ -26,8 +27,10 @@ module.exports.showListing = async (req, res) => {
         listing.reviews = reviews;
     }
 
+    const existingBookings = await Booking.find({ listing: id, status: "confirmed" });
+
     console.log(listing);
-    res.render("listings/show", { listing });
+    res.render("listings/show", { listing, existingBookings });
 };
 
 module.exports.createListing = async (req, res, next) => {

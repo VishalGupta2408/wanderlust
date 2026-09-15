@@ -22,6 +22,8 @@ const User = require("./models/user.js");
 const listingRouter = require("./routes/listing");
 const reviewRouter = require("./routes/review.js");
 const userRouter = require("./routes/user.js");
+const bookingRouter = require("./routes/booking.js");
+const bookingsRouter = require("./routes/bookings.js");
 
 const dbUrl = process.env.ATLASDB_URL;
 
@@ -97,9 +99,11 @@ app.get("/", (req, res) => {
     res.redirect("/listings");
 });
 
-// Teeno routers ko yahan connect kiya gaya hai
+// Routers ko yahan connect kiya gaya hai
 app.use("/listings", listingRouter);
 app.use("/listings/:id/reviews", reviewRouter);
+app.use("/listings/:id/bookings", bookingRouter);
+app.use("/bookings", bookingsRouter);
 app.use("/", userRouter);
 
 app.use((req, res, next) => {
