@@ -4,7 +4,7 @@
         color: white;
         border-radius: 25px;
         padding: 0 1rem 0 1rem;
-        border: none; /* Default border hatane ke liye */
+        border: none;
         white-space: nowrap;
     }
 
@@ -53,6 +53,7 @@
                     <a class="nav-link" href="/login"><b>Login</b></a>
                 <% } %>
                 <% if (currUser) { %>
+                    <a class="nav-link" href="/bookings"><b>My Trips</b></a>
                     <a class="nav-link" href="/logout">Logout</a>
                 <% } %>
             </div>
