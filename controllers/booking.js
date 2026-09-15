@@ -1,5 +1,6 @@
 const Booking = require("../models/booking");
 const Listing = require("../models/listing");
+const ExpressError = require("../utils/ExpressError.js");
 
 module.exports.createBooking = async (req, res) => {
     let { id } = req.params;
@@ -73,21 +74,23 @@ module.exports.getUserBookings = async (req, res) => {
     res.render("bookings/index.ejs", { upcomingBookings, pastBookings });
 };
 
-module.exports.cancelBooking = async (req, res) => {
+module.exports.cancelBooking = async (req, res, next) => {
     let { bookingId } = req.params;
-    let booking = await Booking.findById(bookingId);
+    let booking = await Booking.findById(bookingId).populate("listing");
     if (!booking) {
         req.flash("error", "Booking not found!");
         return res.redirect("/bookings");
     }
 
-    if (!booking.user.equals(req.user._id)) {
-        req.flash("error", "You do not have permission to cancel this booking!");
-        return res.redirect("/bookings");
+    let isGuest = booking.user.equals(req.user._id);
+    let isHost = booking.listing && booking.listing.owner && booking.listing.owner.equals(req.user._id);
+
+    if (!isGuest && !isHost) {
+        return next(new ExpressError(403, "You do not have permission to cancel this booking!"));
     }
 
     booking.status = "cancelled";
     await booking.save();
     req.flash("success", "Trip booking cancelled successfully!");
-    res.redirect("/bookings");
+    res.redirect(req.get("referer") || "/bookings");
 };
