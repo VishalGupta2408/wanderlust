@@ -115,4 +115,71 @@ body {
 #map { 
     height: 400px;
     width: 80vh;
-     }
+}
+
+/* My Trips Section Enhancements */
+.stat-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.08) !important;
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.trip-card {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.trip-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0.75rem 1.5rem rgba(0,0,0,0.1) !important;
+}
+
+.trip-card-img {
+    transition: transform 0.4s ease;
+}
+
+.trip-card:hover .trip-card-img {
+    transform: scale(1.04);
+}
+
+.hover-danger:hover {
+    color: #fe424d !important;
+}
+
+.trip-filter-pills .nav-link {
+    background-color: #f8f9fa;
+    color: #495057;
+    border: 1px solid #e9ecef;
+    transition: all 0.2s ease;
+}
+
+.trip-filter-pills .nav-link:hover {
+    background-color: #e9ecef;
+    color: #212529;
+}
+
+.trip-filter-pills .nav-link.active {
+    background-color: #fe424d !important;
+    color: #ffffff !important;
+    border-color: #fe424d !important;
+}
+
+@keyframes pulseBadge {
+    0% { opacity: 0.8; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.03); }
+    100% { opacity: 0.8; transform: scale(1); }
+}
+
+.pulse-badge {
+    animation: pulseBadge 2s infinite ease-in-out;
+}
