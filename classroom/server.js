@@ -37,11 +37,8 @@ app.get("/register", (req, res) => {
     res.redirect("/hello");
 });
 
-
-
 app.get("/hello", (req, res) => {
     res.render("page.ejs", { name: req.session.name });
-    next();
 });
 
 app.listen(3000, () => {
