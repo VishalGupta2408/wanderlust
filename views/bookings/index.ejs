@@ -102,11 +102,15 @@
         </div>
     </div>
 
-    <!-- Trips Grid -->
+    <!-- Trips Grid Placeholder -->
     <% if (totalCount === 0) { %>
         <div class="card border-0 shadow-sm rounded-4 p-5 text-center my-5 bg-light">
             <div class="mb-3">
                 <i class="fa-solid fa-map-location-dot text-danger opacity-75" style="font-size: 4rem;"></i>
             </div>
             <h4 class="fw-bold">No trips booked yet!</h4>
-            <p class=
+            <p class="text-muted">You haven't booked any trips. Start exploring your next adventure!</p>
+            <a href="/listings" class="btn btn-danger rounded-pill px-4 mt-2">Explore Listings</a>
+        </div>
+    <% } %>
+</div>
