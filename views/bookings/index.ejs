@@ -13,6 +13,7 @@
     </div>
 
     <%
+        const now = new Date();
         const allBookings = [...(upcomingBookings || []), ...(pastBookings || [])];
         const totalCount = allBookings.length;
         const confirmedCount = upcomingBookings ? upcomingBookings.length : 0;
@@ -102,7 +103,6 @@
         </div>
     </div>
 
-    <!-- Trips Grid Placeholder -->
     <% if (totalCount === 0) { %>
         <div class="card border-0 shadow-sm rounded-4 p-5 text-center my-5 bg-light">
             <div class="mb-3">
@@ -112,5 +112,149 @@
             <p class="text-muted">You haven't booked any trips. Start exploring your next adventure!</p>
             <a href="/listings" class="btn btn-danger rounded-pill px-4 mt-2">Explore Listings</a>
         </div>
+    <% } else { %>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="tripsGrid">
+            <% for (let b of allBookings) { 
+                const isUpcoming = b.status === "confirmed" && new Date(b.checkOut) >= now;
+                const isCompleted = b.status === "confirmed" && new Date(b.checkOut) < now;
+                const isCancelled = b.status === "cancelled";
+                let category = "completed";
+                if (isCancelled) category = "cancelled";
+                else if (isUpcoming) category = "upcoming";
+                
+                const listing = b.listing;
+                const title = listing ? listing.title : "Listing Unavailable";
+                const location = listing ? `${listing.location}, ${listing.country}` : "Location Unavailable";
+                const imageUrl = listing && listing.image && listing.image.url ? listing.image.url : 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=60';
+                const searchText = (title + " " + location).toLowerCase();
+            %>
+                <div class="col trip-card-wrapper" data-category="<%= category %>" data-search="<%= searchText %>">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden trip-card">
+                        <div class="position-relative">
+                            <img src="<%= imageUrl %>" class="card-img-top trip-card-img" alt="<%= title %>" style="height: 200px; object-fit: cover;">
+                            <div class="position-absolute top-0 end-0 m-3">
+                                <% if (isUpcoming) { %>
+                                    <span class="badge bg-success rounded-pill px-3 py-2 shadow-sm pulse-badge">
+                                        <i class="fa-solid fa-clock me-1"></i>Upcoming
+                                    </span>
+                                <% } else if (isCompleted) { %>
+                                    <span class="badge bg-primary rounded-pill px-3 py-2 shadow-sm">
+                                        <i class="fa-solid fa-circle-check me-1"></i>Completed
+                                    </span>
+                                <% } else { %>
+                                    <span class="badge bg-secondary rounded-pill px-3 py-2 shadow-sm">
+                                        <i class="fa-solid fa-ban me-1"></i>Cancelled
+                                    </span>
+                                <% } %>
+                            </div>
+                        </div>
+                        <div class="card-body p-4 d-flex flex-column justify-content-between">
+                            <div>
+                                <h5 class="fw-bold card-title text-truncate mb-1"><%= title %></h5>
+                                <p class="text-muted small mb-3">
+                                    <i class="fa-solid fa-location-dot text-danger me-1"></i><%= location %>
+                                </p>
+                                <div class="bg-light p-3 rounded-3 mb-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-2 small">
+                                        <span class="text-muted"><i class="fa-regular fa-calendar me-1"></i>Check-in:</span>
+                                        <span class="fw-semibold"><%= new Date(b.checkIn).toLocaleDateString("en-IN", { day: 'numeric', month: 'short', year: 'numeric' }) %></span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mb-2 small">
+                                        <span class="text-muted"><i class="fa-regular fa-calendar-check me-1"></i>Check-out:</span>
+                                        <span class="fw-semibold"><%= new Date(b.checkOut).toLocaleDateString("en-IN", { day: 'numeric', month: 'short', year: 'numeric' }) %></span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center small">
+                                        <span class="text-muted"><i class="fa-solid fa-moon me-1"></i>Duration:</span>
+                                        <span class="fw-semibold"><%= b.nights %> <%= b.nights === 1 ? 'night' : 'nights' %></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <span class="text-muted small">Total Paid</span>
+                                    <span class="fs-5 fw-bold text-dark">&#8377; <%= (b.totalPrice || 0).toLocaleString("en-IN") %></span>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <% if (listing) { %>
+                                        <a href="/listings/<%= listing._id %>" class="btn btn-outline-dark btn-sm rounded-pill flex-grow-1 fw-semibold">
+                                            <i class="fa-solid fa-eye me-1"></i>View Stay
+                                        </a>
+                                    <% } %>
+                                    <% if (isUpcoming) { %>
+                                        <form method="POST" action="/bookings/<%= b._id %>?_method=DELETE" class="d-inline flex-grow-1" onsubmit="return confirm('Are you sure you want to cancel this trip booking?');">
+                                            <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill w-100 fw-semibold">
+                                                <i class="fa-solid fa-xmark me-1"></i>Cancel
+                                            </button>
+                                        </form>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+
+        <div id="noMatchingTrips" class="card border-0 shadow-sm rounded-4 p-5 text-center my-4 bg-light d-none">
+            <div class="mb-3">
+                <i class="fa-solid fa-magnifying-glass text-muted opacity-75" style="font-size: 3rem;"></i>
+            </div>
+            <h5 class="fw-bold">No trips match your criteria</h5>
+            <p class="text-muted mb-0">Try adjusting your search query or selecting a different filter tab.</p>
+        </div>
     <% } %>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const filterButtons = document.querySelectorAll(".trip-filter-pills button");
+        const searchInput = document.getElementById("tripSearchInput");
+        const tripCards = document.querySelectorAll(".trip-card-wrapper");
+        const noMatchesDiv = document.getElementById("noMatchingTrips");
+
+        let activeFilter = "all";
+        let searchQuery = "";
+
+        function filterTrips() {
+            let visibleCount = 0;
+            tripCards.forEach(card => {
+                const category = card.getAttribute("data-category");
+                const search = card.getAttribute("data-search");
+
+                const matchesFilter = (activeFilter === "all" || category === activeFilter);
+                const matchesSearch = (!searchQuery || search.includes(searchQuery));
+
+                if (matchesFilter && matchesSearch) {
+                    card.classList.remove("d-none");
+                    visibleCount++;
+                } else {
+                    card.classList.add("d-none");
+                }
+            });
+
+            if (noMatchesDiv) {
+                if (visibleCount === 0 && tripCards.length > 0) {
+                    noMatchesDiv.classList.remove("d-none");
+                } else {
+                    noMatchesDiv.classList.add("d-none");
+                }
+            }
+        }
+
+        filterButtons.forEach(btn => {
+            btn.addEventListener("click", () => {
+                filterButtons.forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+                activeFilter = btn.getAttribute("data-filter");
+                filterTrips();
+            });
+        });
+
+        if (searchInput) {
+            searchInput.addEventListener("input", (e) => {
+                searchQuery = e.target.value.toLowerCase().trim();
+                filterTrips();
+            });
+        }
+    });
+</script>
