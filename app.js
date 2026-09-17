@@ -1,8 +1,6 @@
-if (process.env.NODE_ENV != "production"){
-require('dotenv').config();
+if (process.env.NODE_ENV != "production") {
+    require('dotenv').config();
 };
-
-console.log(process.env.SECRET);
 
 const express = require('express');
 const app = express();
@@ -18,14 +16,13 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const User = require("./models/user.js");
 
-// Routers require kiye gaye hain
 const listingRouter = require("./routes/listing");
 const reviewRouter = require("./routes/review.js");
 const userRouter = require("./routes/user.js");
 const bookingRouter = require("./routes/booking.js");
 const hostRouter = require("./routes/host.js");
 
-const dbUrl = process.env.ATLASDB_URL;
+const dbUrl = process.env.ATLASDB_URL || "mongodb://127.0.0.1:27017/wanderlust";
 
 main()
     .then(() => {
@@ -58,7 +55,7 @@ store.on("error", (err) => {
 
 const sessionOptions = {
     store,
-    secret: process.env.SECRET,
+    secret: process.env.SECRET || "mysupersecretstring",
     resave: false,
     saveUninitialized: true,
     cookie: {
@@ -82,6 +79,7 @@ app.use((req, res, next) => {
     res.locals.success = req.flash("success");
     res.locals.error = req.flash("error");
     res.locals.currUser = req.user;
+    res.locals.q = req.query.q || "";
     next();
 });
 
@@ -99,7 +97,6 @@ app.get("/", (req, res) => {
     res.redirect("/listings");
 });
 
-// Teeno routers ko yahan connect kiya gaya hai
 app.use("/listings", listingRouter);
 app.use("/listings/:id/reviews", reviewRouter);
 app.use("/", userRouter);

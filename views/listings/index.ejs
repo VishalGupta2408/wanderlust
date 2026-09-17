@@ -35,12 +35,9 @@
             margin-left: 5rem;
             display: flex;
             align-items: center;
-
-
         }
     </style>
     
-
     <div id="filters">
         <div class="filter">
            <div> <i class="fa-solid fa-fire"></i></div>
@@ -90,18 +87,14 @@
     <div class="row row-cols-lg-4 row-cols-md-2 row-cols-sm-1 mt-3">
         <% for(let listing of allListings){ %>
             <a href="/listings/<%= listing._id %>" class="listing-link" style="text-decoration: none; color: inherit;">
-
                 <div class="card col listing-card" style="margin-bottom: 2rem;">
-                    <img src="<%= listing.image.url ? listing.image.url : listing.image %>" class="card-img-top"
+                    <img src="<%= listing.image && listing.image.url ? listing.image.url : 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=60' %>" class="card-img-top"
                         alt="listing_img" style="height: 20rem; object-fit: cover;">
-
-                    <div class="card-img-overlay">abc</div>
-
+                    <div class="card-img-overlay"></div>
                     <div class="card-body">
                         <p class="card-text">
                             <b><%= listing.title %></b><br />
-                            &#8377; <%= listing.price.toLocaleString("en-IN") %> / night
-                            <!-- Yahan class="tax-info" ko theek kiya hai -->
+                            &#8377; <%= (listing.price || 0).toLocaleString("en-IN") %> / night
                             <i class="tax-info"> &nbsp; &nbsp; +18% GST</i>
                         </p>
                     </div>
@@ -121,5 +114,13 @@
                     info.style.display = "none";
                 }
             }
+        });
+
+        let filters = document.querySelectorAll(".filter");
+        filters.forEach(filter => {
+            filter.addEventListener("click", () => {
+                let categoryText = filter.querySelector("p").innerText.toLowerCase();
+                window.location.href = `/listings?q=${encodeURIComponent(categoryText)}`;
+            });
         });
     </script>

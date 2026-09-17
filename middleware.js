@@ -4,7 +4,6 @@ const ExpressError = require("./utils/ExpressError.js");
 const { listingSchema, reviewSchema, bookingSchema } = require("./utils/schema.js");
 
 module.exports.isLoggedIn = (req, res, next) => {
-    console.log(req.user);
     if (!req.isAuthenticated()) {
         if (req.method === "POST") {
             let listingId = req.params.id;
@@ -32,6 +31,10 @@ module.exports.saveRedirectUrl = (req, res, next) => {
 module.exports.isOwner = async (req, res, next) => {
     let { id } = req.params;
     let listing = await Listing.findById(id);
+    if (!listing) {
+        req.flash("error", "Listing requested does not exist!");
+        return res.redirect("/listings");
+    }
     if (!listing.owner.equals(res.locals.currUser._id)) {
         req.flash("error", "You are not the owner of this listing");
         return res.redirect(`/listings/${id}`);
